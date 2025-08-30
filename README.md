@@ -14,7 +14,7 @@ This approach centralizes environment-specific logic and variables, keeping the 
 Flexible Profiles uses a three-layered system for defining variables. This provides a clear structure for default values, calculated variables, and just-in-time expressions.
 
 1.  **Layer 1: Defaults (`fp_defaults`)**: Provides the most basic, overridable default values for a profile (e.g., a service name or default directory).
-2.  **Layer 2: Instant Expressions (`fp_instant_expressions`)**: Contains variables that are calculated immediately ("eagerly") based on the values from the defaults layer.
+2.  **Layer 2: Instant Expressions (`fp_instant_expressions`)**: Contains variables that are calculated immediately ("eagerly") based on the values from the defaults layer and overrides.
 3.  **Layer 3: Deferred Expressions (`fp_deferred_expressions`)**: Contains variables that are evaluated "lazily" every time they are used in a task. This is useful for values that depend on runtime facts.
 
 A consumer role can choose to use any or all of these layers by providing a path to the corresponding variable directory or skipping a layer by setting its path to `"skip"`.
