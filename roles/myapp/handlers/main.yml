@@ -1,0 +1,8 @@
+---
+# Import all profile-specific handlers.
+# The 'when' condition inside each file ensures only the correct one runs.
+- name: Import RedHat-9 handlers
+  ansible.builtin.import_tasks: RedHat-9.yml
+
+- name: Import Windows-2022 handlers
+  ansible.builtin.import_tasks: Windows-2022.yml

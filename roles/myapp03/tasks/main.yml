@@ -1,0 +1,13 @@
+---
+# Main tasks for the myapp03 role.
+
+- name: Initialize Flexible Profiles for myapp03
+  ansible.builtin.include_tasks: init_fp.yml
+  tags: [always]
+
+- name: "Verify the results from Flexible Profiles"
+  ansible.builtin.debug:
+    msg:
+      - "Profile Determined: {{ myapp03_fp_active_profile }}"
+      - "Log Level (from defaults): {{ myapp03_log_level }}"
+      - "API Endpoint (from instant expression): {{ myapp03_api_endpoint }}"

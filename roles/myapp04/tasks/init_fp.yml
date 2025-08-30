@@ -1,0 +1,23 @@
+---
+# This task decides the active profile and then initializes Flexible Profiles.
+
+- name: Set Flexible Profiles paths as facts
+  ansible.builtin.set_fact:
+    fp_defaults_path: "{{ role_path }}/vars/fp/fp_defaults"
+    fp_instant_expressions_path: "skip"
+    fp_deferred_expressions_path: "{{ role_path }}/vars/fp/fp_deferred_expressions"
+
+# This task initializes Flexible Profiles for this role.
+- name: Load Flexible Profiles for myapp04
+  ansible.builtin.include_role:
+    name: FlexibleProfiles
+  vars:
+    fp_consumer_role_name: "myapp04"
+    fp_export_with_consumer_role_prefix: true
+    # The active profile is determined by the 'target_env' variable
+    fp_active_profile: "{{ target_env }}"
+    fp_profile_names:
+      - "DEV"
+      - "UAT"
+      - "STAGING"
+      - "PROD"

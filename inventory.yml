@@ -1,0 +1,5 @@
+all:
+  hosts:
+    localhost:
+      # Variable for myapp04, demonstrates inventory-level override
+      db_host: "db.inventory.example.com"

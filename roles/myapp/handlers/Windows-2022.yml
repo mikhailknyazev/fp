@@ -1,0 +1,10 @@
+---
+- name: Handler block for Windows-2022
+  when: 
+    - myapp_fp_active_profile is defined 
+    - myapp_fp_active_profile == "Windows-2022"
+  block:
+    - name: "Restart myapp service (Windows-2022)"
+      listen: "restart myapp"
+      ansible.builtin.debug:
+        msg: "Handler for 'restart myapp' would run here for profile Windows-2022"

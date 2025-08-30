@@ -1,0 +1,12 @@
+---
+- name: Test the 'myapp03' role (Production Profile)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # This will activate the 'WindowsProd' profile inside the role
+    non_prod: false
+  tasks:
+    - name: Run the 'myapp03' role
+      ansible.builtin.include_role:
+        name: myapp03

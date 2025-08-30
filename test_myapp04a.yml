@@ -1,0 +1,15 @@
+---
+- name: Test the 'myapp04' role (UAT Profile)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # 1. This variable is used by the role to determine the active profile.
+    target_env: "UAT"
+    # 2. This demonstrates a playbook-level override.
+    #    It will override the default value for 'app_version' from the UAT profile.
+    app_version: "1.5-UAT-build-456"
+  tasks:
+    - name: Run the 'myapp04' role
+      ansible.builtin.include_role:
+        name: myapp04

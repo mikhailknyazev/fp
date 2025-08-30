@@ -1,0 +1,13 @@
+---
+# Main tasks for the myapp02 role.
+
+- name: Initialize Flexible Profiles for myapp02
+  ansible.builtin.include_tasks: init_fp.yml
+  tags: [always]
+
+- name: "Verify the results from Flexible Profiles"
+  ansible.builtin.debug:
+    msg:
+      - "Profile Determined: {{ myapp02_fp_active_profile }}"
+      - "Package Name: {{ package_name }}"
+      - "Config File Path: {{ config_file }}"

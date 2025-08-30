@@ -1,0 +1,10 @@
+---
+- name: Handlers for PROD Profile
+  when: 
+    - myapp04_fp_active_profile is defined 
+    - myapp04_fp_active_profile == "PROD"
+  block:
+    - name: configure myapp04 (PROD)
+      listen: configure myapp04
+      ansible.builtin.debug:
+        msg: "Handler for 'configure myapp04' triggered for PROD profile. API Key is {{ myapp04_api_key }}."

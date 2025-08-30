@@ -1,0 +1,10 @@
+---
+- name: Handlers for RedHat-9 Profile
+  when:
+    - myapp_fp_active_profile is defined 
+    - myapp_fp_active_profile == "RedHat-9"
+  block:
+    - name: restart myapp (RHEL-9)
+      listen: restart myapp
+      ansible.builtin.debug:
+        msg: "Handler for 'restart myapp' triggered for RedHat-9 profile. Service is {{ myapp_service_name }}."

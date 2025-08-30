@@ -1,0 +1,6 @@
+_fp_exists: True
+# FIX: Use the prefixed variable for consistency and correctness.
+welcome_banner: "Welcome to {{ inventory_hostname }} running {{ myapp_fp_active_profile }}"
+# NEW: A dynamic message that depends on a variable not yet defined.
+dynamic_message: "The current status is: {{ myapp_current_status if myapp_current_status is defined else 'N/A' }}"
+dynamic_message_02: "The current status is: {% if myapp_current_status is defined %} defined {% else %} not defined {% endif %}"

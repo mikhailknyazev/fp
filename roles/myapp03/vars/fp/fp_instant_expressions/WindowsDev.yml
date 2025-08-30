@@ -1,0 +1,5 @@
+# roles/myapp03/vars/fp/fp_instant_expressions/WindowsDev.yml
+_fp_exists: True
+
+# Eagerly evaluated expressions for the Windows Development profile
+api_endpoint: "https://{{ myapp03_api_server }}/v2/testdata"

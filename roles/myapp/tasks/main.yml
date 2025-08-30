@@ -1,0 +1,56 @@
+---
+# Main tasks for the myapp role.
+
+- name: Initialize Flexible Profiles for myapp
+  ansible.builtin.include_tasks: init_fp.yml
+  tags: 
+    - always
+
+- name: Verify the results from Flexible Profiles
+  ansible.builtin.debug:
+    msg:
+      - "Profile Determined: {{ myapp_fp_active_profile }}"
+      - "Service Name (from defaults): {{ myapp_service_name }}"
+      - "Config Path (from instant expression): {{ myapp_config_path | default('N/A for this profile') }}"
+      - "Welcome Banner (deferred): {{ myapp_welcome_banner if myapp_welcome_banner is defined else myapp_fp_deferred.welcome_banner | default('N/A') }}"
+
+- name: "TEST: Assert that a user override was respected"
+  ansible.builtin.assert:
+    that:
+      - myapp_service_name == "special_service_from_playbook"
+    fail_msg: "The 'service_name' variable was not correctly overridden."
+    success_msg: "The 'service_name' variable was successfully overridden."
+  when: service_name is defined # Only run this test when an override is provided
+
+- name: "TEST: Trigger a handler notification"
+  ansible.builtin.debug:
+    msg: "This task will notify the profile-specific handler to restart the service."
+  changed_when: true # Simulate a change to trigger the handler
+  notify: restart myapp
+
+- name: Flush handlers to run them immediately for the test
+  ansible.builtin.meta: flush_handlers
+
+# --- Start of the Deferred Expression Lifecycle Test ---
+
+- name: "DEFERRED TEST 1: Try to print expression with undefined variable (will show error)"
+  ansible.builtin.debug:
+    msg: "Deferred Message: {{ myapp_fp_deferred.dynamic_message }}; {{ myapp_fp_deferred.dynamic_message_02 }}"
+
+- name: "DEFERRED TEST 2: Define the underlying variable for the first time"
+  ansible.builtin.set_fact:
+    myapp_current_status: "Initialized"
+
+- name: "DEFERRED TEST 3: Print deferred expression again (now it works)"
+  ansible.builtin.debug:
+    msg: "Deferred Message: {{ myapp_fp_deferred.dynamic_message }}; {{ myapp_fp_deferred.dynamic_message_02 }}"
+
+- name: "DEFERRED TEST 4: Change the underlying variable's value"
+  ansible.builtin.set_fact:
+    myapp_current_status: "Updated"
+
+- name: "DEFERRED TEST 5: Print again (shows the new, updated value)"
+  ansible.builtin.debug:
+    msg: "Deferred Message: {{ myapp_fp_deferred.dynamic_message }}; {{ myapp_fp_deferred.dynamic_message_02 }}"
+
+# --- End of the Deferred Expression Lifecycle Test ---

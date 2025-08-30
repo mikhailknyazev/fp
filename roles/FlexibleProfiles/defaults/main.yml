@@ -1,0 +1,21 @@
+# REQUIRED from caller: set this to the chosen profile key (string)
+# Example values: "RedHat-9", "Windows-10", "Generic", "prod-RedHat-9"
+fp_active_profile: ""
+
+# REQUIRED from caller: A list of all possible profile names for validation.
+# Example: ["RedHat-8", "RedHat-9", "Windows-2019", "Windows-2022"]
+fp_profile_names: []
+
+# REQUIRED from caller: The name of the role consuming FP. Used for namespacing internal vars.
+# Example: "myapp", "security_hardening"
+fp_consumer_role_name: ""
+
+# If true, the realized variables will be exported with the consumer role name as a prefix.
+# Example: If fp_consumer_role_name is "myapp", 'service_name' becomes 'myapp_service_name'.
+fp_export_with_consumer_role_prefix: false
+
+# REQUIRED from caller: Paths for the three profile layers.
+# These must be provided by the consumer.
+fp_defaults_path: ""
+fp_instant_expressions_path: ""
+fp_deferred_expressions_path: ""

@@ -1,0 +1,28 @@
+---
+# This task decides the active profile and then initializes Flexible Profiles.
+
+- name: Set Flexible Profiles paths as facts
+  ansible.builtin.set_fact:
+    fp_defaults_path: "{{ role_path }}/vars/fp/fp_defaults"
+    # Expression paths are set to "skip" to disable them
+    fp_instant_expressions_path: "skip"
+    fp_deferred_expressions_path: "skip"
+
+# This task initializes Flexible Profiles for this role.
+- name: Load Flexible Profiles for myapp02
+  ansible.builtin.include_role:
+    name: FlexibleProfiles
+  vars:
+    # 1. Provide the name of this role for namespacing internal FP variables.
+    fp_consumer_role_name: "myapp02"
+
+    # 2. Set to false to export variables WITHOUT a prefix.
+    fp_export_with_consumer_role_prefix: false
+
+    # 3. Determine the active profile based on the 'rhel_legacy_mode' boolean.
+    fp_active_profile: "{{ 'RHEL_legacy' if rhel_legacy_mode | bool else 'RHEL' }}"
+
+    # 4. Provide the list of valid profiles for this role.
+    fp_profile_names:
+      - "RHEL"
+      - "RHEL_legacy"

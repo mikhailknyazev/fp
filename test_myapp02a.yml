@@ -1,0 +1,12 @@
+---
+- name: Test the 'myapp02' role (Modern Profile)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # This will activate the 'RHEL' profile inside the role
+    rhel_legacy_mode: false
+  tasks:
+    - name: Run the 'myapp02' role
+      ansible.builtin.include_role:
+        name: myapp02

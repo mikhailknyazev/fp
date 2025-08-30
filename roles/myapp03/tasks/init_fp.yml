@@ -1,0 +1,28 @@
+---
+# This task decides the active profile and then initializes Flexible Profiles.
+
+- name: Set Flexible Profiles paths as facts
+  ansible.builtin.set_fact:
+    fp_defaults_path: "{{ role_path }}/vars/fp/fp_defaults"
+    fp_instant_expressions_path: "{{ role_path }}/vars/fp/fp_instant_expressions"
+    # The deferred expressions path is set to "skip" to disable this layer
+    fp_deferred_expressions_path: "skip"
+
+# This task initializes Flexible Profiles for this role.
+- name: Load Flexible Profiles for myapp03
+  ansible.builtin.include_role:
+    name: FlexibleProfiles
+  vars:
+    # 1. Provide the name of this role for namespacing internal FP variables.
+    fp_consumer_role_name: "myapp03"
+
+    # 2. Set to true to prefix all realized variables with the role name.
+    fp_export_with_consumer_role_prefix: true
+
+    # 3. Determine the active profile based on the 'non_prod' boolean.
+    fp_active_profile: "{{ 'WindowsDev' if non_prod | bool else 'WindowsProd' }}"
+
+    # 4. Provide the list of valid profiles for this role.
+    fp_profile_names:
+      - "WindowsProd"
+      - "WindowsDev"

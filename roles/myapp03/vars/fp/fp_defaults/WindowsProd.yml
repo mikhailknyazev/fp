@@ -1,0 +1,6 @@
+# roles/myapp03/vars/fp/fp_defaults/WindowsProd.yml
+_fp_exists: True
+
+# Plain, overridable defaults for the Windows Production profile
+log_level: "INFO"
+api_server: "api.prod.example.com"

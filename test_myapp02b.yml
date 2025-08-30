@@ -1,0 +1,14 @@
+---
+- name: Test the 'myapp02' role (Legacy Profile)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # This will activate the 'RHEL_legacy' profile inside the role
+    rhel_legacy_mode: true
+    # This demonstrates overriding a default from the profile
+    package_name: "httpd-legacy-override"
+  tasks:
+    - name: Run the 'myapp02' role
+      ansible.builtin.include_role:
+        name: myapp02

@@ -1,0 +1,24 @@
+---
+# Main tasks for the myapp04 role.
+
+- name: Initialize Flexible Profiles for myapp04
+  ansible.builtin.include_tasks: init_fp.yml
+  tags: [always]
+
+- name: Trigger a handler notification
+  ansible.builtin.debug:
+    msg: "This task will notify a handler. It should only run for the 'PROD' profile."
+  changed_when: true
+  notify: configure myapp04
+
+- name: Flush handlers to run them immediately for the test
+  ansible.builtin.meta: flush_handlers
+
+- name: "Verify the final variable values"
+  ansible.builtin.debug:
+    msg:
+      - "--- Final Configuration for Profile: {{ myapp04_fp_active_profile }} ---"
+      - "Database Host (from inventory): {{ myapp04_db_host }}"
+      - "Application Version (from playbook vars): {{ myapp04_app_version }}"
+      - "API Key (highest precedence override): {{ myapp04_api_key }}"
+      - "Welcome Message (deferred expression): {{ myapp04_fp_deferred.welcome_message }}"

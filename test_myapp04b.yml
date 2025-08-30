@@ -1,0 +1,18 @@
+---
+- name: Test the 'myapp04' role (PROD Profile)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # 1. This variable is used by the role to determine the active profile.
+    target_env: "PROD"
+    # 2. This demonstrates a playbook-level override.
+    app_version: "2.0-RELEASE"
+  tasks:
+    - name: Run the 'myapp04' role
+      ansible.builtin.include_role:
+        name: myapp04
+      vars:
+        # 3. This demonstrates a role include-level override.
+        #    This has higher precedence than the playbook 'vars' or inventory.
+        api_key: "OVERRIDDEN_AT_ROLE_INCLUDE_LEVEL"

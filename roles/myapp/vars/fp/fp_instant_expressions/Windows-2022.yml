@@ -1,0 +1,3 @@
+# Windows-2022 - Eagerly evaluated expressions
+_fp_exists: True
+config_path: "{{ config_dir }}\\config\\applicationHost.config"

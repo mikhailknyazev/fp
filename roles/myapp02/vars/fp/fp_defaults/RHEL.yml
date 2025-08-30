@@ -1,0 +1,6 @@
+# roles/myapp02/vars/fp/fp_defaults/RHEL.yml
+_fp_exists: True
+
+# Plain, overridable defaults for the modern RHEL profile
+package_name: "nginx"
+config_file: "/etc/nginx/nginx.conf"
