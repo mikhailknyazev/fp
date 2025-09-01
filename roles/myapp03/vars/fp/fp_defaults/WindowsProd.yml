@@ -1,5 +1,5 @@
 # roles/myapp03/vars/fp/fp_defaults/WindowsProd.yml
-_fp_exists: True
+_fp_exists: true
 
 # Plain, overridable defaults for the Windows Production profile
 log_level: "INFO"

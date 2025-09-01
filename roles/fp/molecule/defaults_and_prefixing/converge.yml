@@ -1,0 +1,56 @@
+---
+- name: Converge (defaults_and_prefixing)
+  hosts: all
+  gather_facts: false
+
+  vars:
+    # Scenario-local test data
+    test_fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+    test_fp_deferred_path: "skip"
+
+  tasks:
+    # TEST 1: Basic functionality and variable prefixing
+    - name: "TEST 1: Run fp with prefixing"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_consumer_01"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "UAT"
+        fp_profile_names: ["UAT", "PROD"]
+        fp_defaults_path: "{{ test_fp_defaults_path }}"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+
+    - name: "TEST 1: Assertions"
+      ansible.builtin.assert:
+        that:
+          # This value comes directly from the profile default (UAT.yml)
+          - test_consumer_01_db_host == "db.uat.example.com"
+          # This value is now overridden by the prefixed variable in inventory
+          - test_consumer_01_app_version == "inv-uat-1.6.0-prefixed"
+        success_msg: "✅ TEST 1: Basic prefixing and inventory overrides work correctly."
+        fail_msg: "❌ TEST 1: Failed."
+
+    # TEST 2: No variable prefixing (with inventory override)
+    - name: "TEST 2: Run fp without prefixing"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_consumer_no_prefix"
+        fp_export_with_consumer_role_prefix: false
+        fp_active_profile: "PROD"
+        fp_profile_names: ["UAT", "PROD"]
+        fp_defaults_path: "{{ test_fp_defaults_path }}"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+
+    - name: "TEST 2: Assertions"
+      ansible.builtin.assert:
+        that:
+          # This value comes directly from the profile default (PROD.yml)
+          - db_host == "db.prod.example.com"
+          # This value is overridden by the unprefixed variable in inventory
+          - app_version == "inv-2.1.0"
+        success_msg: "✅ TEST 2: No prefixing and inventory overrides work."
+        fail_msg: "❌ TEST 2: Failed."

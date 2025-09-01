@@ -1,0 +1,10 @@
+---
+- name: MYAPP | handlers | fallback.yml | Handlers for fallback Profile
+  when:
+    - myapp_fp_active_profile is defined
+    - myapp_fp_active_profile == "fallback"
+  block:
+    - name: MYAPP | handlers | fallback.yml | restart myapp (fallback)
+      listen: restart myapp
+      ansible.builtin.debug:
+        msg: "Handler for 'restart myapp' triggered for fallback profile. Service is {{ myapp_service_name | default('myapp') }}."

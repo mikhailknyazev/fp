@@ -1,17 +1,34 @@
 ---
 # This task decides the active profile and then initializes Flexible Profiles.
 
-- name: Set Flexible Profiles paths as facts
+- name: MYAPP | Capture caller role_path
   ansible.builtin.set_fact:
-    fp_defaults_path: "{{ role_path }}/vars/fp/fp_defaults"
-    fp_instant_expressions_path: "{{ role_path }}/vars/fp/fp_instant_expressions"
-    fp_deferred_expressions_path: "{{ role_path }}/vars/fp/fp_deferred_expressions"
+    myapp_role_path: "{{ role_path }}"
+
+- name: Set profile key fact based on OS family
+  ansible.builtin.set_fact:
+    myapp_profile_key: >-
+      {{
+        'RedHat-' + ansible_distribution_major_version
+        if ansible_os_family == 'RedHat'
+        else 'Windows-2022'
+        if ansible_os_family == 'Windows'
+        else 'fallback'
+      }}
+
+- name: Display profile key inline
+  ansible.builtin.debug:
+    msg: "The calculated active profile key is {{ myapp_profile_key }}"
 
 # This task initializes Flexible Profiles for this role.
-- name: Load Flexible Profiles for myapp
+- name: MYAPP | init_fp.yml | Load Flexible Profiles for myapp
   ansible.builtin.include_role:
-    name: FlexibleProfiles
+    name: fp
   vars:
+    fp_defaults_path: "{{ myapp_role_path }}/vars/fp/fp_defaults"
+    fp_instant_expressions_path: "{{ myapp_role_path }}/vars/fp/fp_instant_expressions"
+    fp_deferred_expressions_path: "{{ myapp_role_path }}/vars/fp/fp_deferred_expressions"
+
     # 1. Provide the name of this role for namespacing internal FP variables.
     fp_consumer_role_name: "myapp"
 
@@ -19,14 +36,10 @@
     fp_export_with_consumer_role_prefix: true
 
     # 3. Determine the active profile directly here based on OS facts.
-    fp_active_profile: >-
-      {{
-        'RedHat-' + ansible_distribution_major_version if ansible_os_family == 'RedHat'
-        else 'Windows-2022' if ansible_os_family == 'Windows'
-        else 'unknown'
-      }}
+    fp_active_profile: "{{ myapp_profile_key }}"
 
     # 4. Provide the list of valid profiles for this role.
     fp_profile_names:
       - "RedHat-9"
       - "Windows-2022"
+      - "fallback"

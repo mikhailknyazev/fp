@@ -1,20 +1,20 @@
 ---
 # Main tasks for the myapp04 role.
 
-- name: Initialize Flexible Profiles for myapp04
+- name: MYAPP04 | main.yml | Initialize Flexible Profiles for myapp04
   ansible.builtin.include_tasks: init_fp.yml
   tags: [always]
 
-- name: Trigger a handler notification
+- name: MYAPP04 | main.yml | Trigger a handler notification
   ansible.builtin.debug:
     msg: "This task will notify a handler. It should only run for the 'PROD' profile."
   changed_when: true
   notify: configure myapp04
 
-- name: Flush handlers to run them immediately for the test
+- name: MYAPP04 | main.yml | Flush handlers to run them immediately for the test
   ansible.builtin.meta: flush_handlers
 
-- name: "Verify the final variable values"
+- name: MYAPP04 | main.yml | Verify the final variable values
   ansible.builtin.debug:
     msg:
       - "--- Final Configuration for Profile: {{ myapp04_fp_active_profile }} ---"

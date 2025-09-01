@@ -1,0 +1,5 @@
+# Reset internal state variables from any previous runs
+_fp_export_prefix: ~
+_fp_internal_prefix: ~
+_fp_defaults_data: {}
+_fp_instant_expressions_data: {}

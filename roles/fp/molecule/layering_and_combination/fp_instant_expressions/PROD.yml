@@ -1,0 +1,3 @@
+_fp_exists: true
+# This expression depends on `api_host` from the defaults layer
+api_endpoint: "https://{{ test_layering_api_host }}/v1"

@@ -1,0 +1,2 @@
+_fp_exists: true
+welcome_message: "Welcome to PROD. App version is {{ test_consumer_app_version }}."

@@ -1,0 +1,2 @@
+_fp_exists: true
+welcome_banner: "Running on {{ ansible_os_family }} release {{ ansible_distribution_major_version }}"

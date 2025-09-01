@@ -1,0 +1,6 @@
+# fallback - Profile Configuration (defaults)
+_fp_exists: true
+
+# Plain, overridable defaults for fallback profile
+service_name: "myapp"
+config_dir: "/etc/myapp"

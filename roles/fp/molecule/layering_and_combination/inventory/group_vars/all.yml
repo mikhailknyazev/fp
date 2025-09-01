@@ -1,0 +1,14 @@
+#
+# --- Ansible Precedence Level 5: Inventory group_vars ---
+#
+# This file tests how the expression layers react to an inventory override.
+#
+# Precedence Order (Lowest to Highest):
+# 1. Role Defaults (`fp_defaults/PROD.yml` defines `api_host`)
+# 2. >> Inventory group_vars (THIS FILE overrides `api_host`) <<
+# 3. Playbook vars
+#
+# The `fp_instant_expressions` layer should use the value from THIS file,
+# not the value from the `fp_defaults` profile.
+#
+test_layering_api_host: "api.inventory.override.com"

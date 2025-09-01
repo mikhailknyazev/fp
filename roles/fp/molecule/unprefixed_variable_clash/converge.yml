@@ -1,0 +1,50 @@
+---
+- name: Converge (unprefixed_variable_clash)
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    # First call with the 'RHEL' profile
+    - name: "Load RHEL profile without prefix"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_clash"
+        fp_export_with_consumer_role_prefix: false
+        fp_active_profile: "RHEL"
+        fp_profile_names: ["RHEL", "RHEL_legacy"]
+        fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "skip"
+
+    - name: "Assert first value is correct"
+      ansible.builtin.assert:
+        that:
+          - package_name == "nginx"
+        success_msg: "✅ First unprefixed variable was set correctly."
+
+    # Second call in the same play with the 'RHEL_legacy' profile
+    - name: "Load RHEL_legacy profile without prefix"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_clash"
+        fp_export_with_consumer_role_prefix: false
+        fp_active_profile: "RHEL_legacy"
+        fp_profile_names: ["RHEL", "RHEL_legacy"]
+        fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "skip"
+
+    - name: "Assert that the second unprefixed variable did NOT overwrite the first"
+      ansible.builtin.assert:
+        that:
+          # We expect the 'nginx' value from the FIRST run to still be active
+          - package_name == "nginx"
+        success_msg: >
+          ✅ Correctly confirmed caching behavior. The second variable did not
+          overwrite the first, highlighting the importance of using prefixes.
+        fail_msg: >
+          ❌ The test failed unexpectedly. The second variable (httpd) seems
+          to have overwritten the first, which suggests the caching behavior
+          might not be what was expected.

@@ -1,12 +1,13 @@
 # 1. VALIDATE INPUTS & SET PREFIXES
-- name: Assert active profile is provided
+
+- name: FP | main.yml | Assert active profile is provided
   ansible.builtin.assert:
     that:
       - fp_active_profile is defined
       - (fp_active_profile | length) > 0
     fail_msg: "Flexible Profiles: fp_active_profile must be provided (e.g. 'RedHat-9')."
 
-- name: Assert required consumer name and paths are provided
+- name: FP | main.yml | Assert required consumer name and paths are provided
   ansible.builtin.assert:
     that:
       - fp_consumer_role_name is defined and (fp_consumer_role_name | length) > 0
@@ -15,7 +16,7 @@
       - fp_deferred_expressions_path is defined and (fp_deferred_expressions_path | length) > 0
     fail_msg: "Flexible Profiles: fp_consumer_role_name and all path variables must be provided."
 
-- name: Assert a valid list of profiles is provided
+- name: FP | main.yml | Assert a valid list of profiles is provided
   ansible.builtin.assert:
     that:
       - fp_profile_names is defined
@@ -23,67 +24,74 @@
       - fp_active_profile in fp_profile_names
     fail_msg: "Flexible Profiles: Active profile '{{ fp_active_profile }}' is not in the mandatory fp_profile_names list."
 
-- name: Set internal and export prefixes
+- name: FP | main.yml | Set internal and export prefixes
   ansible.builtin.set_fact:
     _fp_internal_prefix: "{{ fp_consumer_role_name ~ '_' }}"
     _fp_export_prefix: "{{ fp_consumer_role_name ~ '_' if fp_export_with_consumer_role_prefix | bool else '' }}"
 
 # 2. PUBLISH INTERNAL FACTS
-- name: Publish namespaced internal facts
+
+- name: FP | main.yml | Publish namespaced internal facts
   ansible.builtin.set_fact:
     "{{ _fp_internal_prefix }}fp_active_profile": "{{ fp_active_profile }}"
 
 # 3. LOAD DEFAULTS (Layer 1 - Plain, overridable values)
-- name: Load defaults for active profile
+
+- name: FP | main.yml | Load defaults for active profile
   ansible.builtin.include_vars:
     file: "{{ fp_defaults_path }}/{{ fp_active_profile }}.yml"
     name: _fp_defaults_data
   when: fp_defaults_path != 'skip'
 
-- name: Fail if defaults file is missing or invalid
+- name: FP | main.yml | Fail if defaults file is missing or invalid
   ansible.builtin.fail:
-    msg: "Flexible Profiles: defaults file not found or is invalid (missing '_fp_exists: True'): {{ fp_defaults_path }}/{{ fp_active_profile }}.yml"
+    msg: "Flexible Profiles: defaults file not found or is invalid (missing '_fp_exists: true'): {{ fp_defaults_path }}/{{ fp_active_profile }}.yml"
   when:
     - fp_defaults_path != 'skip'
     - _fp_defaults_data is not defined or _fp_defaults_data is not mapping or not _fp_defaults_data.get('_fp_exists', false)
 
 # 4. MATERIALIZE & EXPORT VARIABLES (Defaults + User Overrides -> Variables)
-- name: Materialize and export base variables (inputs)
+
+- name: FP | main.yml | Materialize and export base variables (inputs)
   ansible.builtin.set_fact:
-    "{{ _fp_export_prefix }}{{ item.key }}": "{{ vars[item.key] if vars[item.key] is defined else item.value }}"
+    "{{ _fp_export_prefix }}{{ item.key }}": "{{ vars[_fp_export_prefix ~ item.key] if vars[_fp_export_prefix ~ item.key] is defined else item.value }}"
   loop: "{{ _fp_defaults_data | dict2items }}"
   when: fp_defaults_path != 'skip'
 
 # 5. COMPUTE EAGER EXPRESSIONS (Layer 2 - Evaluated immediately)
-- name: Load instant expressions for active profile (optional)
+
+- name: FP | main.yml | Load instant expressions for active profile (optional)
   ansible.builtin.include_vars:
     file: "{{ fp_instant_expressions_path }}/{{ fp_active_profile }}.yml"
     name: _fp_instant_expressions_data
   when: fp_instant_expressions_path != 'skip'
 
-- name: Fail if instant expressions file is missing or invalid
+- name: FP | main.yml | Fail if instant expressions file is missing or invalid
   ansible.builtin.fail:
-    msg: "Flexible Profiles: instant expressions file not found or is invalid (missing '_fp_exists: True'): {{ fp_instant_expressions_path }}/{{ fp_active_profile }}.yml"
+    msg: "Flexible Profiles: instant expressions file not found or invalid: {{ fp_instant_expressions_path }}/{{ fp_active_profile }}.yml"
   when:
     - fp_instant_expressions_path != 'skip'
     - _fp_instant_expressions_data is not defined or _fp_instant_expressions_data is not mapping or not _fp_instant_expressions_data.get('_fp_exists', false)
 
 # 6. MATERIALIZE & EXPORT VARIABLES FROM INSTANT EXPRESSIONS (EAGER) (Expression + User Overrides -> Variables)
-- name: Compute and export instant expressions (eager)
+
+- name: FP | main.yml | Compute and export instant expressions (eager)
   ansible.builtin.set_fact:
-    "{{ _fp_export_prefix }}{{ item.key }}": "{{ vars[item.key] if vars[item.key] is defined else item.value }}"
+    "{{ _fp_export_prefix }}{{ item.key }}": "{{ vars[_fp_export_prefix ~ item.key] if vars[_fp_export_prefix ~ item.key] is defined else item.value }}"
   loop: "{{ _fp_instant_expressions_data | dict2items }}"
   when: fp_instant_expressions_path != 'skip'
 
+
 # 7. STAGE DEFERRED EXPRESSIONS (Layer 3 - Lazy, evaluated each time when used)
-- name: Load deferred expressions for active profile
+
+- name: FP | main.yml | Load deferred expressions for active profile
   ansible.builtin.include_vars:
     file: "{{ fp_deferred_expressions_path }}/{{ fp_active_profile }}.yml"
-    name:  "{{ _fp_internal_prefix }}fp_deferred"
+    name: "{{ _fp_internal_prefix }}fp_deferred"
   when: fp_deferred_expressions_path != 'skip'
 
 # NOTE: the expressions are kept as is only in the original dictionary  "{{ _fp_internal_prefix }}fp_deferred"
-- name: Fail if deferred expressions file is missing or invalid
+- name: FP | main.yml | Fail if deferred expressions file is missing or invalid
   ansible.builtin.fail:
     msg: "Flexible Profiles: deferred expressions file not found or invalid"
   when:

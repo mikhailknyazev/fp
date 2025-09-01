@@ -5,7 +5,7 @@
   gather_facts: true
   vars:
     # This variable will override the default from the profile's fp_defaults file
-    service_name: "special_service_from_playbook"
+    myapp_service_name: "special_service_from_playbook"
   tasks:
     - name: Run the 'myapp' role
       ansible.builtin.include_role:

@@ -1,4 +1,4 @@
-_fp_exists: True
+_fp_exists: true
 # FIX: Use the prefixed variable for consistency and correctness.
 welcome_banner: "Welcome to {{ inventory_hostname }} running {{ myapp_fp_active_profile }}"
 # NEW: A dynamic message that depends on a variable not yet defined.

@@ -1,10 +1,10 @@
 ---
-- name: Handlers for UAT Profile
-  when: 
-    - myapp04_fp_active_profile is defined 
+- name: MYAPP04 | handlers | UAT.yml | Handlers for UAT Profile
+  when:
+    - myapp04_fp_active_profile is defined
     - myapp04_fp_active_profile == "UAT"
   block:
-    - name: configure myapp04 (UAT)
+    - name: MYAPP04 | handlers | UAT.yml | configure myapp04 (UAT)
       listen: configure myapp04
       ansible.builtin.debug:
         msg: "Handler for 'configure myapp04' triggered for UAT profile. API Key is {{ myapp04_api_key }}."

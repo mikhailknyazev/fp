@@ -1,0 +1,32 @@
+# This file contains ignores rule violations for ansible-lint
+
+roles/myapp/vars/fp/fp_defaults/RedHat-9.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_defaults/Windows-2022.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_defaults/fallback.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_deferred_expressions/RedHat-9.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_deferred_expressions/Windows-2022.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_deferred_expressions/fallback.yml var-naming[no-role-prefix] skip
+
+roles/myapp/vars/fp/fp_instant_expressions/RedHat-9.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_instant_expressions/Windows-2022.yml var-naming[no-role-prefix] skip
+roles/myapp/vars/fp/fp_instant_expressions/fallback.yml var-naming[no-role-prefix] skip
+
+roles/myapp02/vars/fp/fp_defaults/RHEL_legacy.yml var-naming[no-role-prefix] skip
+roles/myapp02/vars/fp/fp_defaults/RHEL.yml var-naming[no-role-prefix] skip
+
+roles/myapp03/vars/fp/fp_defaults/WindowsDev.yml var-naming[no-role-prefix] skip
+roles/myapp03/vars/fp/fp_defaults/WindowsProd.yml var-naming[no-role-prefix] skip
+roles/myapp03/vars/fp/fp_instant_expressions/WindowsDev.yml var-naming[no-role-prefix] skip
+roles/myapp03/vars/fp/fp_instant_expressions/WindowsProd.yml var-naming[no-role-prefix] skip
+
+roles/myapp04/vars/fp/fp_defaults/UAT.yml var-naming[no-role-prefix] skip
+roles/myapp04/vars/fp/fp_defaults/PROD.yml var-naming[no-role-prefix] skip
+
+roles/myapp04/vars/fp/fp_deferred_expressions/PROD.yml var-naming[no-role-prefix] skip
+roles/myapp04/vars/fp/fp_deferred_expressions/UAT.yml var-naming[no-role-prefix] skip
+
+roles/fp/molecule/deferred_and_precedence/inventory/group_vars/all.yml var-naming[no-role-prefix] skip
+roles/fp/molecule/deferred_and_precedence/converge.yml var-naming[no-role-prefix] skip
+roles/fp/molecule/defaults_and_prefixing/inventory/group_vars/all.yml var-naming[no-role-prefix] skip
+roles/fp/molecule/defaults_and_prefixing/inventory/group_vars/all.yml var-naming[no-role-prefix] skip
+roles/fp/molecule/layering_and_combination/inventory/group_vars/all.yml var-naming[no-role-prefix] skip

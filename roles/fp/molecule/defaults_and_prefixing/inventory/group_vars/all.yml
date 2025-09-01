@@ -1,0 +1,17 @@
+#
+# This file is used to test inventory-level variable overrides.
+#
+# Precedence Order (Lowest to Highest):
+# 1. Role Defaults (from the profile's fp_defaults file)
+# 2. >> Inventory group_vars (THIS FILE) <<
+# 3. Playbook vars
+# 4. Role include vars
+#
+
+# This PREFIXED variable will override the default for the UAT profile
+# in "TEST 1", demonstrating that overrides must match the prefixing strategy.
+test_consumer_01_app_version: "inv-uat-1.6.0-prefixed"
+
+# This unprefixed variable will override the default for the PROD profile
+# in "TEST 2".
+app_version: "inv-2.1.0"

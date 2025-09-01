@@ -1,0 +1,2 @@
+_fp_exists: true
+welcome_message: "Welcome to UAT. DB is {{ test_consumer_db_host }}."

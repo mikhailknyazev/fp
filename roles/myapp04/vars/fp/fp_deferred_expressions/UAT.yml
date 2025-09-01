@@ -1,5 +1,5 @@
 # roles/myapp04/vars/fp/fp_deferred_expressions/UAT.yml
-_fp_exists: True
+_fp_exists: true
 
 # Default deferred values for the UAT profile
 welcome_message: "Welcome to UAT environment. DB is {{ myapp04_db_host }}."

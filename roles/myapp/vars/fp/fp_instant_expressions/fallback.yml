@@ -1,0 +1,3 @@
+# fallback - Eagerly evaluated expressions
+_fp_exists: true
+config_path: "{{ myapp_config_dir }}/myapp.conf"

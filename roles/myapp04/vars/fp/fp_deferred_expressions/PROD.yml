@@ -1,5 +1,5 @@
 # roles/myapp04/vars/fp/fp_deferred_expressions/PROD.yml
-_fp_exists: True
+_fp_exists: true
 
 # Default deferred values for the PROD profile
 welcome_message: "Welcome to PROD environment. App version is {{ myapp04_app_version }}."

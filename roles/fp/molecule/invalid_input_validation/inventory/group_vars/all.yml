@@ -1,0 +1,4 @@
+# This is a mock inventory file for testing precedence.
+# Values defined here should be overridden by playbook-level variables.
+# db_host: "db.mock.inventory.com"
+# app_version: "inv-1.0.0"

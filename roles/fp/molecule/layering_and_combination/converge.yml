@@ -1,0 +1,27 @@
+---
+- name: Converge (layering_and_combination)
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: "Run fp with all three layers active"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_layering"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "PROD"
+        fp_profile_names: ["PROD"]
+        fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+        fp_instant_expressions_path: "{{ playbook_dir }}/fp_instant_expressions"
+        fp_deferred_expressions_path: "{{ playbook_dir }}/fp_deferred_expressions"
+
+    - name: "Assertions"
+      ansible.builtin.assert:
+        that:
+          # Check that the instant expression used the inventory-overridden value
+          - test_layering_api_endpoint == "https://api.inventory.override.com/v1"
+          # Check that the deferred expression ALSO used the inventory-overridden value
+          - test_layering_fp_deferred.health_check_url == "https://api.inventory.override.com/v1/health"
+        success_msg: "✅ All three variable layers correctly combine and respect inventory overrides."
+        fail_msg: "❌ Layering combination test with inventory overrides failed."

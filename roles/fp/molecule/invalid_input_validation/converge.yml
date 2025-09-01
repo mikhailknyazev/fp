@@ -1,0 +1,94 @@
+---
+- name: Converge (invalid_input_validation)
+  hosts: all
+  gather_facts: false
+
+  vars:
+    # Uniform test variables expected by the fp role
+    test_fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+    test_fp_instant_path: "skip"
+    test_fp_deferred_path: "skip"
+
+  tasks:
+    # TEST 1: Expect failure when active profile is missing
+    - name: "TEST 1: Expect failure when active profile is missing"
+      block:
+        - name: "Run fp with missing active profile"
+          ansible.builtin.include_role:
+            name: fp
+          vars:
+            fp_consumer_role_name: "test_fail"
+            fp_profile_names: ["A", "B"]
+            fp_defaults_path: "{{ test_fp_defaults_path }}"
+            fp_instant_expressions_path: "{{ test_fp_instant_path }}"
+            fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+      rescue:
+        - name: "Confirm failure was as expected"
+          ansible.builtin.assert:
+            that:
+              - "'fp_active_profile must be provided' in ansible_failed_result.msg"
+            success_msg: "✅ TEST 1: Role correctly failed on missing active profile."
+            fail_msg: "❌ TEST 1: Role failed, but not for the expected reason."
+
+    # TEST 2: Expect failure when active profile not in profile list
+    - name: "TEST 2: Expect failure when active profile is not in the valid list"
+      block:
+        - name: "Run fp with active profile not in list"
+          ansible.builtin.include_role:
+            name: fp
+          vars:
+            fp_consumer_role_name: "test_fail"
+            fp_active_profile: "C"
+            fp_profile_names: ["A", "B"]
+            fp_defaults_path: "{{ test_fp_defaults_path }}"
+            fp_instant_expressions_path: "{{ test_fp_instant_path }}"
+            fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+      rescue:
+        - name: "Confirm failure was as expected"
+          ansible.builtin.assert:
+            that:
+              - "'is not in the mandatory fp_profile_names list' in ansible_failed_result.msg"
+            success_msg: "✅ TEST 2: Role correctly failed when active profile is not in the list."
+            fail_msg: "❌ TEST 2: Role failed, but not for the expected reason."
+
+    # TEST 3: Expect failure when a path variable is missing
+    - name: "TEST 3: Expect failure when a path variable is missing"
+      block:
+        - name: "Run fp with a missing path"
+          ansible.builtin.include_role:
+            name: fp
+          vars:
+            fp_consumer_role_name: "test_fail"
+            fp_active_profile: "A"
+            fp_profile_names: ["A", "B"]
+            # fp_defaults_path is intentionally omitted
+            fp_instant_expressions_path: "{{ test_fp_instant_path }}"
+            fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+      rescue:
+        - name: "Confirm failure was as expected"
+          ansible.builtin.assert:
+            that:
+              - "'fp_consumer_role_name and all path variables must be provided' in ansible_failed_result.msg"
+            success_msg: "✅ TEST 3: Role correctly failed on missing path variable."
+            fail_msg: "❌ TEST 3: Role failed, but not for the expected reason."
+
+    # TEST 4: Expect failure when profile file is missing '_fp_exists'
+    - name: "TEST 4: Expect failure when profile file is missing '_fp_exists'"
+      block:
+        - name: "Run fp with invalid profile file"
+          ansible.builtin.include_role:
+            name: fp
+          vars:
+            fp_consumer_role_name: "test_fail"
+            fp_active_profile: "NoExistsFlag"
+            fp_profile_names: ["NoExistsFlag"]
+            fp_defaults_path: "{{ test_fp_defaults_path }}"
+            fp_instant_expressions_path: "{{ test_fp_instant_path }}"
+            fp_deferred_expressions_path: "{{ test_fp_deferred_path }}"
+      rescue:
+        - name: "Confirm failure was as expected"
+          ansible.builtin.assert:
+            that:
+              - "'_fp_exists: true' in ansible_failed_result.msg"
+            success_msg: "✅ TEST 4: Role correctly failed when profile file is missing '_fp_exists'."
+            fail_msg: "❌ TEST 4: Role failed, but not for the expected reason."

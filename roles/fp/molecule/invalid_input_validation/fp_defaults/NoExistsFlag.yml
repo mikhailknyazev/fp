@@ -1,0 +1,2 @@
+# This file is intentionally missing the _fp_exists flag.
+some_var: "some_value"

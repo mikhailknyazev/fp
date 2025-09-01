@@ -1,5 +1,5 @@
 # roles/myapp03/vars/fp/fp_defaults/WindowsDev.yml
-_fp_exists: True
+_fp_exists: true
 
 # Plain, overridable defaults for the Windows Development profile
 log_level: "VERBOSE"

@@ -1,5 +1,5 @@
 # roles/myapp03/vars/fp/fp_instant_expressions/WindowsProd.yml
-_fp_exists: True
+_fp_exists: true
 
 # Eagerly evaluated expressions for the Windows Production profile
 api_endpoint: "https://{{ myapp03_api_server }}/v1/data"

@@ -1,0 +1,4 @@
+_fp_exists: true
+db_host: "db.uat.example.com"
+app_version: "1.5.0"
+api_key: "UAT_API_KEY_FROM_PROFILE"

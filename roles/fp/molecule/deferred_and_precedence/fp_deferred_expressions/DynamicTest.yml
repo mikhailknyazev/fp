@@ -1,0 +1,2 @@
+_fp_exists: true
+status_message: "Current status is: {{ test_dynamic_dynamic_status | default('Undefined') }}"

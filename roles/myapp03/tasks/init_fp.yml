@@ -1,18 +1,20 @@
 ---
 # This task decides the active profile and then initializes Flexible Profiles.
 
-- name: Set Flexible Profiles paths as facts
+- name: MYAPP03 | Capture caller role_path
   ansible.builtin.set_fact:
-    fp_defaults_path: "{{ role_path }}/vars/fp/fp_defaults"
-    fp_instant_expressions_path: "{{ role_path }}/vars/fp/fp_instant_expressions"
+    myapp03_role_path: "{{ role_path }}"
+
+# This task initializes Flexible Profiles for this role.
+- name: MYAPP03 | init_fp.yml | Load Flexible Profiles for myapp03
+  ansible.builtin.include_role:
+    name: fp
+  vars:
+    fp_defaults_path: "{{ myapp03_role_path }}/vars/fp/fp_defaults"
+    fp_instant_expressions_path: "{{ myapp03_role_path }}/vars/fp/fp_instant_expressions"
     # The deferred expressions path is set to "skip" to disable this layer
     fp_deferred_expressions_path: "skip"
 
-# This task initializes Flexible Profiles for this role.
-- name: Load Flexible Profiles for myapp03
-  ansible.builtin.include_role:
-    name: FlexibleProfiles
-  vars:
     # 1. Provide the name of this role for namespacing internal FP variables.
     fp_consumer_role_name: "myapp03"
 

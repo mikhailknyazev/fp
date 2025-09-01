@@ -1,5 +1,5 @@
 # roles/myapp/vars/fp/fp_defaults/RedHat-9.yml
-_fp_exists: True
+_fp_exists: true
 
 # Plain, overridable defaults for RedHat-9
 service_name: "httpd"

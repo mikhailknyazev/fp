@@ -7,7 +7,7 @@
     # This will activate the 'WindowsDev' profile inside the role
     non_prod: true
     # This demonstrates overriding a default from the profile
-    log_level: "DEBUG"
+    myapp03_log_level: "DEBUG"
   tasks:
     - name: Run the 'myapp03' role
       ansible.builtin.include_role:

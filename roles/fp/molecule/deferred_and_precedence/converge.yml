@@ -1,0 +1,136 @@
+---
+- name: Converge (deferred_and_precedence)
+  hosts: all
+  gather_facts: true
+
+  vars:
+    #
+    # --- Ansible Precedence Level 7: Playbook vars ---
+    #
+    # Correctly prefixed override for the 'test_precedence' consumer.
+    test_precedence_precedence_var: "value_from_playbook_vars"
+
+    # Unprefixed override for the 'test_consumer' consumer.
+    test_consumer_app_version: "playbook-v4.0"
+
+  tasks:
+    # TEST 1: Full Precedence Chain Verification
+    - name: "TEST 1: Run fp for full precedence check"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        #
+        # --- Ansible Precedence Level 9: Role include vars (Highest) ---
+        #
+        # Correctly prefixed override with the highest precedence.
+        #
+        test_precedence_precedence_var: "value_from_role_include"
+
+        fp_consumer_role_name: "test_precedence"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "PROD"
+        fp_profile_names: ["PROD"]
+        fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "skip"
+
+
+    - name: "TEST 1: Assertions"
+      ansible.builtin.assert:
+        that:
+          - test_precedence_precedence_var == "value_from_role_include"
+        success_msg: "✅ TEST 1: Full precedence chain with prefixes works as expected."
+        fail_msg: "❌ TEST 1: Full precedence chain test with prefixes failed."
+
+    # TEST 2: Deferred Expression Precedence
+    - name: "TEST 2: Run fp to test deferred expression resolution"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_consumer"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "PROD"
+        fp_profile_names: ["UAT", "PROD"]
+        fp_defaults_path: "{{ playbook_dir }}/fp_defaults"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "{{ playbook_dir }}/fp_deferred_expressions"
+
+    - name: "TEST 2: Assertions"
+      ansible.builtin.assert:
+        that:
+          # This value comes directly from the profile default
+          - test_consumer_db_host == "db.prod.example.com"
+          # This value should come from the playbook vars, overriding inventory
+          - test_consumer_app_version == "playbook-v4.0"
+          # This deferred expression must resolve using the final, playbook-level
+          # value of 'test_consumer_app_version', not the inventory or default value.
+          - test_consumer_fp_deferred.welcome_message == "Welcome to PROD. App version is playbook-v4.0."
+        success_msg: "✅ TEST 2: Deferred expressions correctly use highest precedence variables."
+        fail_msg: "❌ TEST 2: Deferred expressions test failed."
+
+    # TEST 3: Deferred Expression Using ansible_facts
+    - name: "TEST 3: Run fp with fact-based deferred expression"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_facts"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "FactsTest"
+        fp_profile_names: ["FactsTest"]
+        fp_defaults_path: "skip"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "{{ playbook_dir }}/fp_deferred_expressions"
+
+    - name: "TEST 3: Assertions"
+      ansible.builtin.assert:
+        that:
+          # This will resolve to something like 'Running on RedHat release 9'
+          - "'Running on' in test_facts_fp_deferred.welcome_banner"
+          - ansible_os_family in test_facts_fp_deferred.welcome_banner
+        success_msg: "✅ TEST 3: Deferred expressions correctly use ansible_facts."
+        fail_msg: "❌ TEST 3: Failed."
+
+    # TEST 4: Advanced Deferred Expression Lifecycle
+    - name: "TEST 4: Run fp to load a dynamic deferred expression"
+      ansible.builtin.include_role:
+        name: fp
+      vars:
+        fp_consumer_role_name: "test_dynamic"
+        fp_export_with_consumer_role_prefix: true
+        fp_active_profile: "DynamicTest"
+        fp_profile_names: ["DynamicTest"]
+        fp_defaults_path: "skip"
+        fp_instant_expressions_path: "skip"
+        fp_deferred_expressions_path: "{{ playbook_dir }}/fp_deferred_expressions"
+
+    - name: "--- Start of the Deferred Expression Lifecycle Test ---"
+      block:
+        - name: "LIFECYCLE 1: Assert initial state (value is undefined)"
+          ansible.builtin.assert:
+            that:
+              - "'Current status is: Undefined' in test_dynamic_fp_deferred.status_message"
+            success_msg: "✅ LIFECYCLE 1: Correctly evaluated with default value."
+
+        - name: "LIFECYCLE 2: Define the underlying variable for the first time"
+          ansible.builtin.set_fact:
+            test_dynamic_dynamic_status: "Initialized"
+
+        - name: "LIFECYCLE 3: Assert first change is reflected"
+          ansible.builtin.assert:
+            that:
+              - "'Current status is: Initialized' in test_dynamic_fp_deferred.status_message"
+            success_msg: "✅ LIFECYCLE 3: Correctly re-evaluated after variable was defined."
+
+        - name: "LIFECYCLE 4: Change the underlying variable's value"
+          ansible.builtin.set_fact:
+            test_dynamic_dynamic_status: "Completed"
+
+        - name: "LIFECYCLE 5: Assert final change is reflected"
+          ansible.builtin.assert:
+            that:
+              - "'Current status is: Completed' in test_dynamic_fp_deferred.status_message"
+            success_msg: "✅ LIFECYCLE 5: Correctly re-evaluated after variable was changed."
+      always:
+        - name: "--- End of the Deferred Expression Lifecycle Test ---"
+          ansible.builtin.debug:
+            msg: "Deferred expression lifecycle test finished."

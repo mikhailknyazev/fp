@@ -1,0 +1,18 @@
+#
+# This file tests the full variable precedence chain.
+#
+# Precedence Order (Lowest to Highest):
+# 1. Role Defaults (from the profile's fp_defaults file)
+# 2. >> Inventory group_vars (THIS FILE) <<
+# 3. Playbook vars (`converge.yml`)
+# 4. Role include vars (passed directly to `include_role`)
+#
+# The value of `precedence_var` defined here will be overridden by the
+# `converge.yml` playbook, which will in turn be overridden by the
+# `include_role` task vars.
+#
+test_precedence_precedence_var: "value_from_inventory"
+
+# This variable will override the profile default and will be used by
+# a deferred expression in the playbook.
+test_consumer_app_version: "inv-app-v3.0"
