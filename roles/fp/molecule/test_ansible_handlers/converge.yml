@@ -1,0 +1,37 @@
+# IMPORTANT NOTE ON VARIABLE PRECEDENCE:
+#
+# For simplicity in this test, we are using the same consumer role name ("th")
+# for both the UAT and PROD test runs. This highlights a critical behavior
+# in Ansible regarding how facts are cached within a single playbook run.
+#
+# When the first `include_role` runs (e.g., for the UAT profile), the `fp`
+# role successfully sets a fact called `th_api_key` to the value "UAT_API_KEY".
+#
+# When the second `include_role` runs for the PROD profile, the `fp` role's
+# logic checks if the `th_api_key` variable is already defined. Since it was
+# set as a fact in the previous task, Ansible sees that it already exists and
+# will NOT override it with the new value ("PROD_API_KEY") from the PROD profile's
+# defaults. The original value persists.
+#
+# This is why the UAT and PROD runs are commented out to be run separately.
+# In a real-world scenario where you might need to manage multiple instances
+# of a component (like two different database connections) in the same playbook,
+# you would provide a unique `fp_consumer_role_name` for each one to ensure
+# their variables are stored in separate, non-conflicting namespaces.
+---
+- name: Converge (test_ansible_handlers)
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: "Run the test role with the UAT profile"
+      ansible.builtin.include_role:
+        name: th
+      vars:
+        target_env: "UAT"
+
+    # - name: "Run the test role with the PROD profile"
+    #   ansible.builtin.include_role:
+    #     name: th
+    #   vars:
+    #     target_env: "PROD"

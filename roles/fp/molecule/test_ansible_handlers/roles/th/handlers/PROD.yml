@@ -1,0 +1,11 @@
+---
+- name: TH | handlers | PROD.yml | Handlers for PROD Profile
+  when:
+    - th_fp_active_profile is defined
+    - th_fp_active_profile == "PROD"
+  block:
+    - name: TH | handlers | PROD.yml | Configure app (PROD)
+      listen: configure app
+      ansible.builtin.set_fact:
+        th_handler_run_prod: true
+        th_handler_run_prod_api_key: "{{ th_api_key }}"

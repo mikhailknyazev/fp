@@ -1,0 +1,18 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: instance_handlers
+    image: quay.io/centos/centos:stream9
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_CONFIG: "${MOLECULE_SCENARIO_DIRECTORY}/ansible.cfg"
+  inventory:
+    links:
+      group_vars: ./inventory/group_vars/
+verifier:
+  name: ansible

@@ -1,0 +1,56 @@
+---
+# Main tasks for the th role.
+
+- name: TH | main.yml | Reset handler facts
+  ansible.builtin.set_fact:
+    th_handler_run_uat: false
+    th_handler_run_prod: false
+    th_handler_run_uat_api_key: ""
+    th_handler_run_prod_api_key: ""
+
+- name: TH | main.yml | Capture caller role_path
+  ansible.builtin.set_fact:
+    th_role_path: "{{ role_path }}"
+
+- name: TH | main.yml | Initialize Flexible Profiles for {{ target_env }}
+  ansible.builtin.include_role:
+    name: fp
+  vars:
+    fp_consumer_role_name: "th"
+    fp_export_with_consumer_role_prefix: true
+    fp_active_profile: "{{ target_env }}"
+    fp_profile_names: ["PROD", "UAT"]
+    fp_defaults_path: "{{ th_role_path }}/vars/fp/fp_defaults"
+    fp_instant_expressions_path: "skip"
+    fp_deferred_expressions_path: "skip"
+
+- name: TH | main.yml | Trigger a handler notification for {{ target_env }}
+  ansible.builtin.debug:
+    msg: "This task will notify a handler for the '{{ target_env }}' profile."
+  changed_when: true
+  notify: configure app
+
+- name: TH | main.yml | Flush handlers to run them immediately for the test of {{ target_env }}
+  ansible.builtin.meta: flush_handlers
+
+- name: TH | main.yml | Assert that the correct handler was triggered for {{ target_env }}
+  ansible.builtin.assert:
+    that:
+      - >
+        (th_handler_run_uat and
+        not th_handler_run_prod and
+        th_handler_run_uat_api_key == "UAT_API_KEY")
+        if target_env == "UAT" else
+        (th_handler_run_prod and
+        not th_handler_run_uat and
+        th_handler_run_prod_api_key == "PROD_API_KEY")
+    success_msg: >
+      ✅ Handler for '{{ target_env }}' was correctly triggered.
+      handler_run_uat: {{ th_handler_run_uat }},
+      handler_run_prod: {{ th_handler_run_prod }},
+      api_key: {{ th_handler_run_uat_api_key if target_env == 'UAT' else th_handler_run_prod_api_key }}
+    fail_msg: >
+      ❌ Handler for '{{ target_env }}' was not correctly triggered.
+      handler_run_uat: {{ th_handler_run_uat }},
+      handler_run_prod: {{ th_handler_run_prod }},
+      api_key: {{ th_handler_run_uat_api_key if target_env == 'UAT' else th_handler_run_prod_api_key }}

@@ -1,0 +1,7 @@
+---
+# Import all profile-specific handlers.
+- name: TH | handlers | main.yml | Import PROD handlers
+  ansible.builtin.import_tasks: PROD.yml
+
+- name: TH | handlers | main.yml | Import UAT handlers
+  ansible.builtin.import_tasks: UAT.yml

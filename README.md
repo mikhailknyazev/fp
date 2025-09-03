@@ -159,7 +159,8 @@ This project uses **Molecule** for isolated, container-based testing of the fp r
 * defaults\_and\_prefixing: Tests basic variable loading, with and without prefixes.  
 * deferred\_and\_precedence: Verifies that variable override precedence works correctly and that deferred expressions use the final, highest-precedence values.  
 * invalid\_input\_validation: Ensures the role fails predictably and with clear error messages when given bad data.  
-* layering\_and\_combination: A dedicated test to ensure all three variable layers interact correctly with each other.  
+* layering\_and\_combination: A dedicated test to ensure all three variable layers interact correctly with each other.
+* test\_ansible\_handlers: Tests the integration with Ansible handlers, ensuring that profile-specific handlers are correctly triggered and that profile variables are available within their scope.
 * unprefixed\_variable\_clash: An explicit test to confirm the variable caching behavior when not using prefixes.
 
 ### **Running Molecule Tests**

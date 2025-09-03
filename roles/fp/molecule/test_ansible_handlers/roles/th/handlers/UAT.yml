@@ -1,0 +1,11 @@
+---
+- name: TH | handlers | UAT.yml | Handlers for UAT Profile
+  when:
+    - th_fp_active_profile is defined
+    - th_fp_active_profile == "UAT"
+  block:
+    - name: TH | handlers | UAT.yml | Configure app (UAT)
+      listen: configure app
+      ansible.builtin.set_fact:
+        th_handler_run_uat: true
+        th_handler_run_uat_api_key: "{{ th_api_key }}"
