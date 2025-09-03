@@ -10,7 +10,7 @@
     myapp_profile_key: >-
       {{
         'RedHat-' + ansible_distribution_major_version
-        if ansible_os_family == 'RedHat'
+        if ansible_os_family == 'RedHat' and ansible_distribution_major_version == '9'
         else 'Windows-2022'
         if ansible_os_family == 'Windows'
         else 'fallback'
