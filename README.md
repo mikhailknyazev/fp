@@ -181,9 +181,9 @@ molecule test -s invalid_input_validation
 
 This project uses ansible-lint to maintain code quality and adherence to best practices.
 
-### **.ansible-lint-ignore**
+### **.ansible-lint**
 
-The .ansible-lint-ignore file is used to explicitly suppress certain linting warnings that are not applicable to this project's design. For example, the var-naming\[no-role-prefix\] rule is ignored for files within the vars/fp directories. This is intentional, as profile variables are designed to be generic within their files before the fp role optionally applies a prefix.
+The .ansible-lint file is used to explicitly suppress certain linting warnings that are not applicable to this project's design. For example, the var-naming\[no-role-prefix\] rule is ignored. This is intentional, as profile variables are designed to be generic within their files before the fp role optionally applies a prefix.
 
 ### **Running Ansible Lint**
 
