@@ -4,6 +4,8 @@ This project provides a powerful and reusable Ansible pattern called "Flexible P
 
 This approach centralizes environment-specific logic and variables, keeping the main role tasks clean and free of excessive conditional statements.
 
+**For a detailed introduction to the concepts behind this pattern, please see the [Flexible Profiles for Ansible Roles: Easy Management of Variables and Handlers](https://www.linkedin.com/pulse/flexible-profiles-ansible-roles-easy-management-michael-knyazev-phd-iwglc).**
+
 ## **Core Concepts**
 
 * **The Engine (fp role)**: This is the generic, reusable core. It is responsible for reading the active profile, loading variables from different layers, handling overrides, and exporting the final configuration variables for the consumer role to use.  
